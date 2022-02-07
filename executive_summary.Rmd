@@ -1,0 +1,30 @@
+---
+title: "Racial Bias in Gifted and Talented Programs: Executive Summary"
+author: "Alexandra Chang"
+output:
+  pdf_document:
+    toc: no
+  html_document:
+    toc: yes
+    toc_float: yes
+    highlight: tango
+---
+
+### Overview
+
+For my final project, I conducted an exploratory data analysis (EDA) on data from the [Civil Rights Data Collection (CRDC)](https://www2.ed.gov/about/offices/list/ocr/docs/crdc-2017-18.html) — a biennial study conducted by the Office for Civil Rights within the U.S. Department of Education — for the 2017-2018 school year. In this EDA, I sought to visualize the racial disparities that exist in Gifted and Talented (GAT) programs across the United States, specifically the underrepresentation of BIPOC students in GAT programs.
+
+The CRDC collects “a variety of information including student enrollment and educational programs and services, most of which is disaggregated by race/ethnicity, sex, limited English proficiency, and disability.” For this project, I used two data sets from the CRDC: `Enrollment.csv` and `Gifted and Talented.csv`.  
+
+### Summary of key findings
+
+This visualization can be used to compare the trend lines produced by `ggplot2::geom_smooth()` `lm` model. By laying these five model lines together on a single graph, we can view the discrepancies that exist in GAT programs by race. As seen below, Asian and white students are the most overrepresented populations in GAT programs from our data set, while all other racialized groups are underrepresented in GAT programs likely due to their minority status. Black students are the most underrepresented group in Gifted and Talented programs --- indicating the ways in which anti-Blackness and anti-Black racism permeate the U.S. school system --- while Asian students are the only minority group that are overrepresented in GAT programs --- likely because Asian students are racialized by the "model minority" myth.
+
+![alt text][id]
+
+This visualization is a facetted graph that divides our jitter plot into six subplots by `race`. This graph is a second way to represent our findings from above but separated by `race`. Each point on this graph represents an individual school. By including a line of identity $y=x$ on each subplot, we can compare the (in)equality of representation in GAT programs by race. If students were equally represented in GAT programs independent of their `race`, each trend line would lie exactly along the line $y=x$.
+
+![alt text][ex]
+
+[id]: images/exec_summary_1.png
+[ex]: images/exec_summary_2.png

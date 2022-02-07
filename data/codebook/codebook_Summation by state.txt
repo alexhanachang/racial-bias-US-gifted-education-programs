@@ -1,0 +1,30 @@
+Summation by state data
+
+Description
+Summation by state
+
+Usage
+RE
+
+Format
+Data frame with columns
+
+state
+State (abbreviated).
+
+race
+Race and ethnicity broken into two categories: white and bipoc.
+
+gat_count
+Number of students in Gifted and Talented program.
+
+race_count
+Number of students by race and ethnicity.
+
+bipoc_white_ratio
+Ratio of BIPOC to white students in Gifted and Talented program.
+
+Source
+"U.S. Department of Education, CRDC."
+https://www2.ed.gov/about/offices/list/ocr/docs/2017-18-crdc-data.zip
+

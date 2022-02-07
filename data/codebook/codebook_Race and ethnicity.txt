@@ -1,0 +1,35 @@
+Race and ethnicity data
+
+Description
+Race and ethnicity
+
+Usage
+RE
+
+Format
+Data frame with columns
+
+COMBOKEY
+Primary key. Represents a unique school.
+
+state
+State (abbreviated).
+
+race
+"Race and ethnicity broken into six categories: asian, black, hisp, white, other, and bipoc."
+
+gat_count
+Number of students in Gifted and Talented program.
+
+race_count
+Number of students by race and ethnicity.
+
+gat_total
+Total number of students in Gifted and Talented program at school.
+
+total
+Total number of students at school.
+
+Source
+"U.S. Department of Education, CRDC."
+https://www2.ed.gov/about/offices/list/ocr/docs/2017-18-crdc-data.zip
