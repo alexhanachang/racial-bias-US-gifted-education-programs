@@ -1,60 +1,60 @@
+########## SET UP ########## ########## ########## ########## 
 ## Load packages ----------------------------------------------------------
-library(tidyverse)
 library(ggplot2)
+library(tidyverse)
 
 
-########## DATA IMPORT ########## ########## ########## ########## 
 ## Data import -------------------------------------------------------------
-enroll_raw <- read.csv(file = "data/unprocessed/Enrollment.csv")
-gat_raw <- read.csv(file = "data/unprocessed/Gifted and Talented.csv")
+enrollment_raw <- read.csv(file = "data/unprocessed/Enrollment.csv")
+gifted_talented_raw <- read.csv(file = "data/unprocessed/Gifted and Talented.csv")
 
 
 ## Identify key -----------------------------------------------------------
-intersect(names(enroll_raw),
-          names(gat_raw))
+intersect(names(enrollment_raw),
+          names(gifted_talented_raw))
 
-enroll_raw %>% 
+enrollment_raw %>% 
   count(COMBOKEY) %>% 
   filter(n > 1) # Confirm key
 
-gat_raw %>% 
+gifted_talented_raw %>% 
   count(COMBOKEY) %>% 
   filter(n > 1) # Confirm key
 
 
 ## filter() -------------------------------------------------------------------------
 # Filter out schools that do not have GAT programs
-gat_raw <- gat_raw %>% 
+gifted_talented_raw <- gifted_talented_raw %>% 
   filter(SCH_GT_IND == "Yes")
 
 
 ## Rename ------------------------------------------------------------------
-# Rename variables in GAT
-GAT <- gat_raw %>% 
+# Rename variables in gifted_talented_raw
+gifted_talented <- gifted_talented_raw %>% 
   as_tibble() %>% 
-  mutate(gat_raw, 
+  mutate(gifted_talented_raw, 
          state = LEA_STATE, 
-         gat_hisp_m = SCH_GTENR_HI_M, gat_hisp_f = SCH_GTENR_HI_F, 
-         gat_asian_m = SCH_GTENR_AS_M, gat_asian_f = SCH_GTENR_AS_F,
-         gat_black_m = SCH_GTENR_BL_M, gat_black_f = SCH_GTENR_BL_F, 
-         gat_white_m = SCH_GTENR_WH_M, gat_white_f = SCH_GTENR_WH_F,
-         gat_other_m = SCH_GTENR_AM_M + SCH_GTENR_HP_M + SCH_GTENR_TR_M, 
-         gat_other_f = SCH_GTENR_AM_F + SCH_GTENR_HP_F + SCH_GTENR_TR_F, 
-         gat_bipoc_m = gat_hisp_m + gat_asian_m + gat_black_m + gat_other_m, 
-         gat_bipoc_f = gat_hisp_f + gat_asian_f + gat_black_f + gat_other_f, 
-         gat_male = gat_hisp_m + gat_asian_m + gat_black_m + gat_white_m + gat_other_m, 
-         gat_female = gat_hisp_f + gat_asian_f + gat_black_f + gat_white_f + gat_other_f, 
-         gat_total = gat_male + gat_female) %>% # rename and collapse other
-  select(COMBOKEY, state, gat_asian_m, gat_asian_f,
-         gat_black_m, gat_black_f, gat_hisp_m, gat_hisp_f, 
-         gat_white_m, gat_white_f, gat_other_m, gat_other_f, 
-         gat_bipoc_m, gat_bipoc_f, 
-         gat_male, gat_female, gat_total)
+         gifted_hisp_m = SCH_GTENR_HI_M, gifted_hisp_f = SCH_GTENR_HI_F, 
+         gifted_asian_m = SCH_GTENR_AS_M, gifted_asian_f = SCH_GTENR_AS_F,
+         gifted_black_m = SCH_GTENR_BL_M, gifted_black_f = SCH_GTENR_BL_F, 
+         gifted_white_m = SCH_GTENR_WH_M, gifted_white_f = SCH_GTENR_WH_F,
+         gifted_other_m = SCH_GTENR_AM_M + SCH_GTENR_HP_M + SCH_GTENR_TR_M, 
+         gifted_other_f = SCH_GTENR_AM_F + SCH_GTENR_HP_F + SCH_GTENR_TR_F, 
+         gifted_bipoc_m = gifted_hisp_m + gifted_asian_m + gifted_black_m + gifted_other_m, 
+         gifted_bipoc_f = gifted_hisp_f + gifted_asian_f + gifted_black_f + gifted_other_f, 
+         gifted_male = gifted_hisp_m + gifted_asian_m + gifted_black_m + gifted_white_m + gifted_other_m, 
+         gifted_female = gifted_hisp_f + gifted_asian_f + gifted_black_f + gifted_white_f + gifted_other_f, 
+         gifted_total = gifted_male + gifted_female) %>% # rename and collapse other
+  select(COMBOKEY, state, gifted_asian_m, gifted_asian_f,
+         gifted_black_m, gifted_black_f, gifted_hisp_m, gifted_hisp_f, 
+         gifted_white_m, gifted_white_f, gifted_other_m, gifted_other_f, 
+         gifted_bipoc_m, gifted_bipoc_f, 
+         gifted_male, gifted_female, gifted_total)
 
-# Rename variables in enroll
-enroll <- enroll_raw %>% 
+# Rename variables in enrollment
+enrollment <- enrollment_raw %>% 
   as_tibble() %>% 
-  mutate(enroll_raw, 
+  mutate(enrollment_raw, 
          state = LEA_STATE, 
          hisp_m = SCH_ENR_HI_M, hisp_f = SCH_ENR_HI_F, 
          asian_m = SCH_ENR_AS_M, asian_f = SCH_ENR_AS_F, 
@@ -75,32 +75,31 @@ enroll <- enroll_raw %>%
 
 ## filter() ----------------------------------------------------------------
 # Filter out all-boys and all-girls schools
-enroll <- enroll %>% 
+enrollment <- enrollment %>% 
   filter(male > 0, 
          female > 0)
 
 
-
-########## ANALYSIS 1: RACE-ETHNICITY ########## ########## ########## ########## 
+########## ANALYSIS 1: SUM BY RACE ########## ########## ########## ########## 
 ## Rename --------------------------------------------------------------------
-# Rename variables in GAT
-GAT_RE <- GAT %>% 
-  mutate(GAT, 
-         gat_asian = gat_asian_m + gat_asian_f,
-         gat_black = gat_black_m + gat_black_f,
-         gat_hisp = gat_hisp_m + gat_hisp_f,
-         gat_white = gat_white_m + gat_white_f,
-         gat_other = gat_other_m + gat_other_f,
-         gat_bipoc = gat_asian + gat_black + gat_hisp + gat_other) %>% 
-  filter(gat_total > 0) %>% 
+# Rename variables in gifted_talented
+gifted_talented_sum_by_race <- gifted_talented %>% 
+  mutate(gifted_talented, 
+         gifted_asian = gifted_asian_m + gifted_asian_f,
+         gifted_black = gifted_black_m + gifted_black_f,
+         gifted_hisp = gifted_hisp_m + gifted_hisp_f,
+         gifted_white = gifted_white_m + gifted_white_f,
+         gifted_other = gifted_other_m + gifted_other_f,
+         gifted_bipoc = gifted_asian + gifted_black + gifted_hisp + gifted_other) %>% 
+  filter(gifted_total > 0) %>% 
   select(COMBOKEY, state, 
-         gat_asian, gat_black, gat_hisp, 
-         gat_white, gat_other, gat_bipoc, 
-         gat_total)
+         gifted_asian, gifted_black, gifted_hisp, 
+         gifted_white, gifted_other, gifted_bipoc, 
+         gifted_total)
 
-# Rename variables in enroll
-enroll_RE <- enroll %>% 
-  mutate(enroll, 
+# Rename variables in enrollment
+enrollment_sum_by_race <- enrollment %>% 
+  mutate(enrollment, 
          asian = asian_m + asian_f,
          black = black_m + black_f,
          hisp = hisp_m + hisp_f,
@@ -113,53 +112,48 @@ enroll_RE <- enroll %>%
 
 
 ## inner_join() -------------------------------------------------------------
-RE <- enroll_RE %>% 
-  inner_join(GAT_RE, 
+gifted_talented_enrollment_by_race <- enrollment_sum_by_race %>% 
+  inner_join(gifted_talented_sum_by_race, 
              by = "COMBOKEY")
 
-RE <- RE %>% 
-  select(COMBOKEY, state, gat_asian, asian, 
-         gat_black, black, 
-         gat_hisp, hisp, 
-         gat_white, white,
-         gat_other, other, 
-         gat_bipoc, bipoc, 
-         gat_total, total)
+gifted_talented_enrollment_by_race <- gifted_talented_enrollment_by_race %>% 
+  select(COMBOKEY, state, gifted_asian, asian, 
+         gifted_black, black, 
+         gifted_hisp, hisp, 
+         gifted_white, white,
+         gifted_other, other, 
+         gifted_bipoc, bipoc, 
+         gifted_total, total)
 
 
 ## Tidy --------------------------------------------------------------------
-RE <- RE %>% 
-  unite(asian, gat_asian, asian, sep = "_") %>% 
-  unite(black, gat_black, black, sep = "_") %>% 
-  unite(hisp, gat_hisp, hisp, sep = "_") %>% 
-  unite(white, gat_white, white, sep = "_") %>% 
-  unite(other, gat_other, other, sep = "_") %>% 
-  unite(bipoc, gat_bipoc, bipoc, sep = "_") %>% 
+gifted_talented_enrollment_by_race <- gifted_talented_enrollment_by_race %>% 
+  unite(asian, gifted_asian, asian, sep = "_") %>% 
+  unite(black, gifted_black, black, sep = "_") %>% 
+  unite(hisp, gifted_hisp, hisp, sep = "_") %>% 
+  unite(white, gifted_white, white, sep = "_") %>% 
+  unite(other, gifted_other, other, sep = "_") %>% 
+  unite(bipoc, gifted_bipoc, bipoc, sep = "_") %>% 
   pivot_longer(c("asian", "black", "hisp", "white", "other", "bipoc"), 
                names_to = "race", values_to = "count") %>% # pivot columns
-  separate(count, into = c("gat_count", "race_count"), sep = "_") %>% # separate race into total 
+  separate(count, into = c("gifted_count", "race_count"), sep = "_") %>% # separate race into total 
   # count and GAT count
-  mutate(gat_count = as.numeric(gat_count), 
+  mutate(gifted_count = as.numeric(gifted_count), 
          race_count = as.numeric(race_count)) %>% # typeof() = numeric
   filter(total >= 10) %>% # school must have more than 10 students
-  select(COMBOKEY, state, race, gat_count, race_count, 
-         gat_total, total) # select columns
-
-RE_nest <- RE %>% 
-  group_by(state, COMBOKEY) %>% 
-  nest() # view data by school
+  select(COMBOKEY, state, race, gifted_count, race_count, 
+         gifted_total, total) # select columns
 
 race_levels <- c(
   "asian", "black", "hisp", "white", "other", "bipoc"
 ) # factor race
 
-race <- factor(RE$race, levels = race_levels) # factor race
+race <- factor(gifted_talented_enrollment_by_race$race, levels = race_levels) # factor race
 
 
 ## Export data -------------------------------------------------------------------------
-saveRDS(RE, file = "data/processed/Race and Ethnicity_tidy.rds")
-write_csv(RE, file = "data/processed/Race and Ethnicity_tidy.csv")
-saveRDS(RE_nest, file = "data/processed/Race and Ethnicity by school_tidy.rds")
+saveRDS(gifted_talented_enrollment_by_race, file = "data/processed/gifted_talented_enrollment_by_race.rds")
+write_csv(gifted_talented_enrollment_by_race, file = "data/processed/gifted_talented_enrollment_by_race.csv")
 
 
 ########## ANALYSIS 2: BIPOC REPRESENTATION BY STATE ########## ########## ########## ########## 
@@ -201,4 +195,5 @@ by_state <- by_state %>%
 ## Export data -------------------------------------------------------------------------
 saveRDS(by_state, file = "data/processed/Summation by state_tidy.rds")
 write_csv(by_state, file = "data/processed/Summation by state_tidy.csv")
+
 
