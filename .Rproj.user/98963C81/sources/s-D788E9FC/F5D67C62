@@ -3,17 +3,17 @@
     "path": "~/Desktop/portfolio/racial-bias-US-gifted-education-programs/data_cleaning.R",
     "project_path": "data_cleaning.R",
     "type": "r_source",
-    "hash": "0",
+    "hash": "2152218407",
     "contents": "",
     "dirty": false,
     "created": 1644704603263.0,
     "source_on_save": false,
-    "relative_order": 2,
+    "relative_order": 1,
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "156,0",
-        "scrollLine": "148"
+        "cursorPosition": "148,15",
+        "scrollLine": "145"
     },
     "folds": "1|17|5|0|\n",
     "lastKnownWriteTime": 1644705788,

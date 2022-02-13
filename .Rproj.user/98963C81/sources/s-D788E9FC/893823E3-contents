@@ -1,0 +1,161 @@
+library(ggplot2)
+library(ggthemes)
+library(rsconnect)
+library(shiny)
+library(tidyverse)
+
+
+# cdc <- read_delim(file = "data/cdc.txt", delim = "|") %>%
+#   mutate(
+#     hlthplan = factor(hlthplan, 
+#                       levels = c(1,0), 
+#                       labels = c("Yes", "No")
+#     ), 
+#     exerany = factor(exerany, 
+#                      levels = c(1, 0), 
+#                      labels = c("Yes", "No")
+#     ), 
+#     smoke100 = factor(smoke100, 
+#                       levels = c(1,0), 
+#                       labels = c("Yes", "No")
+#     ), 
+#     gender = factor(gender, 
+#                     levels = c("f", "m"), 
+#                     labels = c("Female", "Male")
+#     ), 
+#     genhlth = factor(genhlth,
+#                      levels = c("excellent", "very good", "good", "fair", "poor"), 
+#                      labels = c("Excellent", "Very good", "Good", "Fair", "Poor") 
+#     )
+#   )
+
+
+# define UI 
+ui <- fluidPage(
+  
+  # application title
+  titlePanel("CDC BRFSS Histograms"),
+  
+  # sidebar with a slider input for number of bins 
+  sidebarLayout(
+    
+    # position sidebar
+    position = "right", 
+    
+    # # drop down widget
+    # sidebarPanel(
+    #   selectInput(
+    #     inputId = "x_var",
+    #     label = "Select Variable:",
+    #     choices = list(
+    #       "Actual Weight" = "weight", 
+    #       "Desired Weight" = "wtdesire", 
+    #       "Height" = "height"
+    #     ), 
+    #     selected = "Actual Weight"
+    #   ), 
+    #   
+    #   # bins for histogram
+    #   sliderInput(
+    #     inputId = "bins", 
+    #     label = "Number of bins:", 
+    #     min = 5, 
+    #     max = 50, 
+    #     value = 30
+    #   ), 
+      
+      # radio buttons for fill variable
+      radioButtons(
+        inputId = "color_var", 
+        label = "Select Legend Variable:", 
+        choices = list(
+          "asian", 
+          "black", 
+          "hisp", 
+          "white", 
+          "other",
+          "bipoc"
+        ), 
+        selected = "race"
+      )
+    ), 
+    
+    # show plot
+    mainPanel(
+      plotOutput("distPlot")
+    )
+  )
+)
+
+
+# define server logic
+server <- function(input, output) {
+  
+  output$distPlot <- renderPlot({
+    
+    # var-hist
+    var_hist <- case_when(
+      input$x_var == "weight"   ~ pull(cdc, weight), 
+      input$x_var == "wtdesire" ~ pull(cdc, wtdesire), 
+      input$x_var == "height"   ~ pull(cdc, height), 
+    )
+    
+    # fill-hist
+    fill_hist <- switch(
+      input$fill_var, 
+      "General Health"         = cdc$genhlth, 
+      "Health Coverage"        = cdc$hlthplan, 
+      "Exercised in Past Month" = cdc$exerany, 
+      "Smoked 100 Cigarettes"  = cdc$smoke100, 
+      "Gender"                 = cdc$gender
+    )
+    
+    # x-axis-lables
+    x_label <- switch(
+      input$x_var, 
+      "weight"   = "Actual Weight in Pounds", 
+      "wtdesire" = "Desired Weight in Pounds", 
+      "height"   = "Height in Inches"
+    )
+    
+    # generate bins
+    bin_breaks <- seq(min(var_hist), max(var_hist), length.out = input$bins + 1)
+    
+    # building histogram
+    if(is.null(fill_hist)){
+      
+    }
+    
+    ggplot(cdc, aes(var_hist)) + 
+      geom_histogram(
+        aes(fill = fill_hist), 
+        breaks = bin_breaks, 
+        color = "black"
+      ) + 
+      scale_fill_discrete(
+        name = input$fill_var
+      ) +
+      theme_fivethirtyeight() + 
+      labs(
+        x = x_label,
+        y = "Count"
+      ) + 
+      theme(
+        axis.title = element_text(), 
+        legend.position = "top", 
+        legend.direction = "horizontal",
+        legend.title.align = 0.5
+      ) + 
+      guides(
+        fill = guide_legend(
+          title.position = "top"
+        )
+      )
+  })
+}
+
+
+# run application 
+shinyApp(ui = ui, server = server)
+
+
