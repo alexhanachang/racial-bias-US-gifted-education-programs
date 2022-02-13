@@ -3,7 +3,7 @@
     "path": "~/Desktop/portfolio/racial-bias-US-gifted-education-programs/analysis 1.R",
     "project_path": "analysis 1.R",
     "type": "r_source",
-    "hash": "2120770670",
+    "hash": "0",
     "contents": "",
     "dirty": false,
     "created": 1644704824919.0,
@@ -14,14 +14,14 @@
         "source_window_id": "",
         "Source": "Source",
         "cursorPosition": "36,0",
-        "scrollLine": "18"
+        "scrollLine": "5"
     },
     "folds": "",
-    "lastKnownWriteTime": 1644723870,
+    "lastKnownWriteTime": 1644733668,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1644723870530,
+    "last_content_update": 1644733668,
     "read_only": false,
     "read_only_alternatives": []
 }
