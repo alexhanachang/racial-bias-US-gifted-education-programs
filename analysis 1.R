@@ -143,7 +143,7 @@ gifted_talented_enrollment_by_race %>%
 #### (9) Representation of all students in GAT programs:  
 
 gifted_talented_enrollment_by_race %>% 
-  ggplot(aes(prop_gat_total, prop_gat_race, color = race)) + 
+  ggplot(aes(x = prop_gifted_total, y = prop_gifted_race, color = race)) + 
   geom_smooth(se = F) + 
   scale_color_manual(values = c("firebrick1", "darkorange", "goldenrod1", 
                                 "darkolivegreen3", "cornflowerblue", "slateblue1")) +
@@ -156,7 +156,7 @@ gifted_talented_enrollment_by_race %>%
 #### (10) Representation of all students in GAT programs, facetted by race:  
 
 gifted_talented_enrollment_by_race %>% 
-  ggplot(aes(x = prop_gat_total, y = prop_gat_race, color = race)) + 
+  ggplot(aes(x = prop_gifted_total, y = prop_gifted_race, color = race)) + 
   geom_jitter(color = "grey75", size = 0.4) + 
   geom_smooth() + 
   scale_color_manual(values = c("firebrick1", "darkorange", "goldenrod1", 
